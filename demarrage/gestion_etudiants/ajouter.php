@@ -2,22 +2,18 @@
 $titre = 'Ajouter un étudiant';
 require_once __DIR__ . '/config/connexion.php';
 
-// Valeurs du formulaire (vides au premier affichage, conservées en cas d'erreur)
+// Données du formulaire
 $donnees = ['cne' => '', 'nom' => '', 'prenom' => '', 'email' => '', 'filiere' => '', 'date_naissance' => ''];
 $erreurs = [];
 
-// ---------------------------------------------------------------
-// Étape 3 : traitement du formulaire (uniquement si envoi en POST)
-// ---------------------------------------------------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    // 1) Récupération et nettoyage des données
+    // Nettoyage des données
     foreach ($donnees as $champ => $v) {
         $donnees[$champ] = trim($_POST[$champ] ?? '');
     }
     $donnees['cne'] = strtoupper($donnees['cne']);
 
-    // 2) Validation côté serveur
+    // Vérification des données
     if (!preg_match('/^[A-Z0-9]{6,20}$/', $donnees['cne'])) {
         $erreurs['cne'] = 'Le CNE doit contenir 6 à 20 lettres majuscules ou chiffres.';
     }
@@ -33,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!in_array($donnees['filiere'], FILIERES, true)) {
         $erreurs['filiere'] = 'Veuillez choisir une filière dans la liste.';
     }
-    // date facultative : si elle est renseignée, elle doit être au format AAAA-MM-JJ
+    // La date est facultative
     if ($donnees['date_naissance'] !== '') {
         $d = DateTime::createFromFormat('Y-m-d', $donnees['date_naissance']);
         if (!$d || $d->format('Y-m-d') !== $donnees['date_naissance']) {
@@ -41,12 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // 3) Insertion avec une requête préparée (protection contre l'injection SQL)
+    // Ajout dans la base
     if (empty($erreurs)) {
         $pdo = getConnexion();
 
-        // TODO 3.2.a : écrire la requête INSERT avec des marqueurs nommés
-        //   :cne, :nom, :prenom, :email, :filiere, :date_naissance
         $sql = 'INSERT INTO etudiants (cne, nom, prenom, email, filiere, date_naissance)
                 VALUES (:cne, :nom, :prenom, :email, :filiere, :date_naissance)';
 
@@ -66,31 +60,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $pdo->lastInsertId();
             header('Location: liste.php?ajout=' . $id);
             exit;
-            // TODO 3.2.b : préparer la requête avec $pdo->prepare($sql)
-
-
-            // TODO 3.2.c : lier chaque marqueur à sa valeur avec bindValue()
-            //   Attention : si date_naissance est vide, envoyer null avec PDO::PARAM_NULL
-
-
-            // TODO 3.2.d : exécuter la requête
-
-
-            // TODO 3.3 : récupérer l'id inséré avec lastInsertId()
-            //   puis rediriger vers liste.php?ajout=ID avec header('Location: ...') et exit;
-
-
         } catch (PDOException $e) {
             if (($e->errorInfo[1] ?? 0) == 1062) {
                 $erreurs['global'] = 'Un etudiant avec ce CNE ou cet e-mail existe deja.';
             } else {
                 $erreurs['global'] = 'Erreur : ' . $e->getMessage();
             }
-            // TODO 3.4 : si $e->errorInfo[1] vaut 1062 (doublon sur une clé UNIQUE)
-            //   => $erreurs['global'] = 'Un étudiant avec ce CNE ou cet e-mail existe déjà.';
-            //   sinon afficher le code ($e->getCode()) et le message ($e->getMessage())
-
-
         }
     }
 }

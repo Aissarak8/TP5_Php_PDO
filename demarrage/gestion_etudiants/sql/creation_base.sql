@@ -1,25 +1,13 @@
--- =====================================================================
 -- TP PDO - Gestion des étudiants
--- Script de création de la base de données (FOURNI)
---
--- Utilisation dans phpMyAdmin (http://localhost/phpmyadmin) :
---   1. Cliquer sur l'onglet « Importer » (ou « SQL »)
---   2. Choisir ce fichier (ou coller son contenu dans l'onglet SQL)
---   3. Cliquer sur « Importer » / « Exécuter »
---
--- Le script peut être relancé sans risque : il supprime puis recrée la base.
--- =====================================================================
-
--- 1) Création de la base de données (utf8mb4 pour gérer les accents)
+-- Création de la base
 DROP DATABASE IF EXISTS gestion_etudiants;
 CREATE DATABASE gestion_etudiants
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_general_ci;
 
--- 2) Sélection de la base
 USE gestion_etudiants;
 
--- 3) Création de la table des étudiants
+-- Table des étudiants
 CREATE TABLE etudiants (
     id               INT UNSIGNED  NOT NULL AUTO_INCREMENT,
     cne              VARCHAR(20)   NOT NULL,
@@ -34,7 +22,7 @@ CREATE TABLE etudiants (
     UNIQUE KEY uk_etudiants_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 4) Jeu de données de test
+-- Données de test
 INSERT INTO etudiants (cne, nom, prenom, email, filiere, date_naissance) VALUES
     ('R130456789', 'Alaoui',     'Salma',   'salma.alaoui@etu.uca.ma',    'Informatique',  '2004-03-15'),
     ('D140987654', 'Bennani',    'Youssef', 'youssef.bennani@etu.uca.ma', 'Informatique',  '2003-11-02'),

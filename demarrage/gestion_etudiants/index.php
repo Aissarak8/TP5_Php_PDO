@@ -3,7 +3,6 @@ $titre = 'Accueil';
 require_once __DIR__ . '/config/connexion.php';
 
 $pdo = getConnexion();
-// query() suffit ici : la requête ne contient aucune donnée venant de l'utilisateur
 $total = $pdo->query('SELECT COUNT(*) FROM etudiants')->fetchColumn();
 
 require __DIR__ . '/includes/header.php';

@@ -1,5 +1,5 @@
 <?php
-/** En-tête commun à toutes les pages. Définir $titre avant l'include. */
+// En-tête des pages
 $titre = $titre ?? 'Gestion des étudiants';
 $page  = basename($_SERVER['SCRIPT_NAME']);
 ?>
